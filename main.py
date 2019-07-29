@@ -9,7 +9,7 @@ import random
 from importlib import reload
 
 
-from keras.utils import plot_model
+# from keras.utils import plot_model
 
 from game import Game, GameState
 from agent import Agent
@@ -64,7 +64,7 @@ else:
 
 #copy the config file to the run folder
 copyfile('./config.py', run_folder + 'config.py')
-plot_model(current_NN.model, to_file=run_folder + 'models/model.png', show_shapes = True)
+# plot_model(current_NN.model, to_file=run_folder + 'models/model.png', show_shapes = True)
 
 print('\n')
 
@@ -74,7 +74,7 @@ current_player = Agent('current_player', env.state_size, env.action_size, config
 best_player = Agent('best_player', env.state_size, env.action_size, config.MCTS_SIMS, config.CPUCT, best_NN)
 #user_player = User('player1', env.state_size, env.action_size)
 iteration = 0
-
+# playMatchesBetweenVersions(env, 1, 1, 1, 10, lg.logger_tourney, 0)
 while 1:
 
     iteration += 1

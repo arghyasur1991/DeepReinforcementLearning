@@ -5,17 +5,16 @@ import config
 import numpy as np
 
 import matplotlib.pyplot as plt
-
-from keras.models import Sequential, load_model, Model
-from keras.layers import Input, Dense, Conv2D, Flatten, BatchNormalization, Activation, LeakyReLU, add
-from keras.optimizers import SGD
-from keras import regularizers
+from tensorflow.keras.models import Sequential, load_model, Model
+from tensorflow.keras.layers import Input, Dense, Conv2D, Flatten, BatchNormalization, Activation, LeakyReLU, add
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras import regularizers
 
 from loss import softmax_cross_entropy_with_logits
 
 import loggers as lg
 
-import keras.backend as K
+import tensorflow.keras.backend as K
 
 from settings import run_folder, run_archive_folder
 
@@ -120,14 +119,14 @@ class Residual_CNN(Gen_Model):
 		x = Conv2D(
 		filters = filters
 		, kernel_size = kernel_size
-		, data_format="channels_first"
+		# , data_format="channels_first"
 		, padding = 'same'
 		, use_bias=False
 		, activation='linear'
 		, kernel_regularizer = regularizers.l2(self.reg_const)
 		)(x)
 
-		x = BatchNormalization(axis=1)(x)
+		x = BatchNormalization(axis=-1)(x)
 
 		x = add([input_block, x])
 
@@ -140,14 +139,14 @@ class Residual_CNN(Gen_Model):
 		x = Conv2D(
 		filters = filters
 		, kernel_size = kernel_size
-		, data_format="channels_first"
+		# , data_format="channels_first"
 		, padding = 'same'
 		, use_bias=False
 		, activation='linear'
 		, kernel_regularizer = regularizers.l2(self.reg_const)
 		)(x)
 
-		x = BatchNormalization(axis=1)(x)
+		x = BatchNormalization(axis=-1)(x)
 		x = LeakyReLU()(x)
 
 		return (x)
@@ -157,7 +156,7 @@ class Residual_CNN(Gen_Model):
 		x = Conv2D(
 		filters = 1
 		, kernel_size = (1,1)
-		, data_format="channels_first"
+		# , data_format="channels_first"
 		, padding = 'same'
 		, use_bias=False
 		, activation='linear'
@@ -165,7 +164,7 @@ class Residual_CNN(Gen_Model):
 		)(x)
 
 
-		x = BatchNormalization(axis=1)(x)
+		x = BatchNormalization(axis=-1)(x)
 		x = LeakyReLU()(x)
 
 		x = Flatten()(x)
@@ -196,14 +195,14 @@ class Residual_CNN(Gen_Model):
 		x = Conv2D(
 		filters = 2
 		, kernel_size = (1,1)
-		, data_format="channels_first"
+		# , data_format="channels_first"
 		, padding = 'same'
 		, use_bias=False
 		, activation='linear'
 		, kernel_regularizer = regularizers.l2(self.reg_const)
 		)(x)
 
-		x = BatchNormalization(axis=1)(x)
+		x = BatchNormalization(axis=-1)(x)
 		x = LeakyReLU()(x)
 
 		x = Flatten()(x)
@@ -241,5 +240,7 @@ class Residual_CNN(Gen_Model):
 
 	def convertToModelInput(self, state):
 		inputToModel =  state.binary #np.append(state.binary, [(state.playerTurn + 1)/2] * self.input_dim[1] * self.input_dim[2])
-		inputToModel = np.reshape(inputToModel, self.input_dim) 
+		perm = [2,0,1]
+		idim = [self.input_dim[i] for i in perm]
+		inputToModel = np.transpose(np.reshape(inputToModel, idim), (1,2,0))
 		return (inputToModel)
