@@ -74,8 +74,10 @@ current_player = Agent('current_player', env.state_size, env.action_size, config
 best_player = Agent('best_player', env.state_size, env.action_size, config.MCTS_SIMS, config.CPUCT, best_NN)
 #user_player = User('player1', env.state_size, env.action_size)
 iteration = 0
-# playMatchesBetweenVersions(env, 1, 1, 1, 10, lg.logger_tourney, 0)
-while 1:
+user = 1
+if user:
+    playMatchesBetweenVersions(env, 1, -1, 6, 5, lg.logger_tourney, 0)
+while 1 - user:
 
     iteration += 1
     reload(lg)

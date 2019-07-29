@@ -15,7 +15,7 @@ def playMatchesBetweenVersions(env, run_version, player1version, player2version,
     if player1version == -1:
         player1 = User('player1', env.state_size, env.action_size)
     else:
-        player1_NN = Residual_CNN(config.REG_CONST, config.LEARNING_RATE, env.input_shape,   env.action_size, config.HIDDEN_CNN_LAYERS)
+        player1_NN = Residual_CNN(config.REG_CONST, config.LEARNING_RATE, (2,) + env.grid_shape,   env.action_size, config.HIDDEN_CNN_LAYERS)
 
         if player1version > 0:
             player1_network = player1_NN.read(env.name, run_version, player1version)
@@ -25,7 +25,7 @@ def playMatchesBetweenVersions(env, run_version, player1version, player2version,
     if player2version == -1:
         player2 = User('player2', env.state_size, env.action_size)
     else:
-        player2_NN = Residual_CNN(config.REG_CONST, config.LEARNING_RATE, env.input_shape,   env.action_size, config.HIDDEN_CNN_LAYERS)
+        player2_NN = Residual_CNN(config.REG_CONST, config.LEARNING_RATE, (2,) + env.grid_shape,   env.action_size, config.HIDDEN_CNN_LAYERS)
         
         if player2version > 0:
             player2_network = player2_NN.read(env.name, run_version, player2version)
@@ -95,8 +95,8 @@ def playMatches(player1, player2, EPISODES, logger, turns_until_tau0, memory = N
             logger.info('action: %d', action)
             for r in range(env.grid_shape[0]):
                 logger.info(['----' if x == 0 else '{0:.2f}'.format(np.round(x,2)) for x in pi[env.grid_shape[1]*r : (env.grid_shape[1]*r + env.grid_shape[1])]])
-            logger.info('MCTS perceived value for %s: %f', state.pieces[str(state.playerTurn)] ,np.round(MCTS_value,2))
-            logger.info('NN perceived value for %s: %f', state.pieces[str(state.playerTurn)] ,np.round(NN_value,2))
+            logger.info('MCTS perceived value for %s: %f', state.pieces[str(state.playerTurn)] ,np.round(MCTS_value,2) if MCTS_value is not None else -1)
+            logger.info('NN perceived value for %s: %f', state.pieces[str(state.playerTurn)] ,np.round(NN_value,2) if NN_value is not None else -1)
             logger.info('====================')
 
             ### Do the action
